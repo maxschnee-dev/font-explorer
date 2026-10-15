@@ -8,16 +8,184 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <script type="module" src="/main.ts"></script>
   </head>
-  <body class="bg-white font-sans text-slate-900">
-    <main class="mx-auto max-w-3xl px-4 py-12">
-      <h1 class="text-4xl font-bold">Font Explorer</h1>
-      <p class="mt-2 text-slate-600">Explore all Google Fonts.</p>
-      <p id="status" class="mt-6 text-sm text-slate-500" role="status"></p>
-    </main>
+  <body class="bg-white font-sans text-slate-900 antialiased">
+    <!-- Icon sprite. Use with: <svg class="icon size-5"><use href="#i-heart" /></svg> -->
+    <svg hidden xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10" /></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></symbol>
+      <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5Z" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" /></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6l-8-3Z" /><path d="m9 12 2 2 4-4" /></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z" /><path d="M19 16v4M17 18h4" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5v14l12-7Z" /></symbol>
+    </svg>
+
+    <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 lg:px-6">
+        <a href="#" class="flex items-center gap-3 rounded-lg">
+          <svg viewBox="0 0 32 32" class="size-9" aria-hidden="true">
+            <rect x="2" y="2" width="12" height="12" rx="3" fill="#ea4335" />
+            <rect x="18" y="2" width="12" height="12" rx="6" fill="#fbbc04" />
+            <rect x="2" y="18" width="12" height="12" rx="6" fill="#34a853" />
+            <rect x="18" y="18" width="12" height="12" rx="3" fill="#4285f4" />
+          </svg>
+          <h1 class="text-xl font-semibold tracking-tight">Google Fonts Explorer</h1>
+        </a>
+        <p class="hidden border-l border-slate-200 pl-6 text-sm text-slate-500 xl:block">Discover. Preview. Love.</p>
+
+        <form id="search-form" role="search" class="order-last flex-1 basis-full md:order-none md:basis-0 md:max-w-2xl">
+          <label for="search" class="sr-only">Search fonts, categories, or designers</label>
+          <div class="flex items-center gap-3 rounded-xl bg-slate-100 px-4 py-2.5 text-slate-500 focus-within:ring-2 focus-within:ring-blue-600">
+            <svg class="icon size-5 shrink-0" aria-hidden="true"><use href="#i-search" /></svg>
+            <input id="search" type="search" autocomplete="off" placeholder="Search fonts, categories, or designers…" class="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500" />
+          </div>
+        </form>
+
+        <button type="button" id="open-favorites" class="ml-auto flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-100">
+          <svg class="icon size-5" aria-hidden="true"><use href="#i-heart" /></svg>
+          Favorites
+          <span data-fav-count class="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">0</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="grid lg:grid-cols-[15rem_1fr] xl:grid-cols-[15rem_1fr_20rem]">
+      <!-- Left: navigation and filters -->
+      <aside class="border-b border-slate-200 p-4 lg:border-r lg:border-b-0" aria-label="Navigation and filters">
+        <nav aria-label="Browse">
+          <ul id="nav" class="space-y-1 text-sm font-medium text-slate-600">
+            <li><button type="button" data-nav="all" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-slate-100 aria-[current=true]:bg-blue-50 aria-[current=true]:text-blue-700"><svg class="icon size-5" aria-hidden="true"><use href="#i-home" /></svg>All Fonts</button></li>
+            <li><button type="button" data-nav="categories" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-slate-100"><svg class="icon size-5" aria-hidden="true"><use href="#i-list" /></svg>Categories</button></li>
+            <li><button type="button" data-nav="trending" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-slate-100 aria-[current=true]:bg-blue-50 aria-[current=true]:text-blue-700"><svg class="icon size-5" aria-hidden="true"><use href="#i-flame" /></svg>Trending</button></li>
+            <li><button type="button" data-nav="recent" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-slate-100 aria-[current=true]:bg-blue-50 aria-[current=true]:text-blue-700"><svg class="icon size-5" aria-hidden="true"><use href="#i-clock" /></svg>Recently Added</button></li>
+            <li><button type="button" data-nav="favorites" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-slate-100 aria-[current=true]:bg-blue-50 aria-[current=true]:text-blue-700"><svg class="icon size-5" aria-hidden="true"><use href="#i-heart" /></svg>Favorites</button></li>
+          </ul>
+        </nav>
+
+        <form id="filters" class="mt-6 space-y-6 border-t border-slate-200 pt-6 text-sm">
+          <div class="flex items-center justify-between">
+            <h2 class="flex items-center gap-3 font-semibold"><svg class="icon size-5" aria-hidden="true"><use href="#i-filter" /></svg>Filters</h2>
+            <button type="button" id="reset-filters" class="text-xs font-medium text-blue-700 hover:underline">Reset</button>
+          </div>
+
+          <fieldset class="space-y-3">
+            <legend class="mb-3 text-slate-500">Categories</legend>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="category" value="serif" class="size-4 accent-blue-600" />Serif</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="category" value="sans-serif" class="size-4 accent-blue-600" />Sans Serif</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="category" value="display" class="size-4 accent-blue-600" />Display</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="category" value="handwriting" class="size-4 accent-blue-600" />Handwriting</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="category" value="monospace" class="size-4 accent-blue-600" />Monospace</label>
+          </fieldset>
+
+          <div>
+            <label for="language" class="mb-2 block font-medium text-slate-700">Language</label>
+            <select id="language" name="language" class="field">
+              <option value="">All Languages</option>
+            </select>
+          </div>
+
+          <fieldset class="space-y-3">
+            <legend class="mb-3 font-medium text-slate-700">Number of Styles</legend>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="styles" value="1-2" class="size-4 accent-blue-600" />1–2</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="styles" value="3-5" class="size-4 accent-blue-600" />3–5</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="styles" value="6-10" class="size-4 accent-blue-600" />6–10</label>
+            <label class="flex items-center gap-3 text-slate-600"><input type="checkbox" name="styles" value="11-999" class="size-4 accent-blue-600" />11+</label>
+          </fieldset>
+
+          <div>
+            <label for="sort" class="mb-2 block font-medium text-slate-700">Sorting</label>
+            <select id="sort" name="sort" class="field">
+              <option value="popular">Popular</option>
+              <option value="trending">Trending</option>
+              <option value="newest">Newest</option>
+              <option value="name">Name (A–Z)</option>
+            </select>
+          </div>
+        </form>
+      </aside>
+
+      <!-- Center: collections and the infinite font list -->
+      <main class="min-w-0 space-y-10 p-4 lg:p-6">
+        <section aria-labelledby="collections-title">
+          <h2 id="collections-title" class="mb-4 text-xl font-semibold">Featured Collections</h2>
+          <ul class="grid gap-4 sm:grid-cols-3">
+            <li>
+              <button type="button" data-collection="serif" class="flex w-full items-center gap-4 rounded-xl border border-slate-200 p-3 text-left hover:border-slate-300 hover:shadow-sm">
+                <span aria-hidden="true" class="grid size-14 shrink-0 place-items-center rounded-lg bg-orange-50 font-display text-2xl">Aa</span>
+                <span><span class="block text-sm font-semibold">Serif Classics</span><span class="block text-xs text-slate-500">Elegant and timeless</span></span>
+              </button>
+            </li>
+            <li>
+              <button type="button" data-collection="sans-serif" class="flex w-full items-center gap-4 rounded-xl border border-slate-200 p-3 text-left hover:border-slate-300 hover:shadow-sm">
+                <span aria-hidden="true" class="grid size-14 shrink-0 place-items-center rounded-lg bg-sky-50 text-2xl font-semibold text-sky-900">Aa</span>
+                <span><span class="block text-sm font-semibold">Modern Sans</span><span class="block text-xs text-slate-500">Clean and versatile</span></span>
+              </button>
+            </li>
+            <li>
+              <button type="button" data-collection="display" class="flex w-full items-center gap-4 rounded-xl border border-slate-200 p-3 text-left hover:border-slate-300 hover:shadow-sm">
+                <span aria-hidden="true" class="grid size-14 shrink-0 place-items-center rounded-lg bg-pink-50 font-display text-2xl font-bold text-pink-900">Aa</span>
+                <span><span class="block text-sm font-semibold">Display Fonts</span><span class="block text-xs text-slate-500">Make a statement</span></span>
+              </button>
+            </li>
+          </ul>
+        </section>
+
+        <section id="fonts" class="scroll-mt-24" aria-labelledby="fonts-title">
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h2 id="fonts-title" class="text-xl font-semibold">Popular Fonts</h2>
+              <p id="results" role="status" class="text-sm text-slate-500"></p>
+            </div>
+          </div>
+          <div id="font-grid" data-region tabindex="-1" class="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3"></div>
+          <div id="sentinel" aria-hidden="true"></div>
+        </section>
+      </main>
+
+      <!-- Right: favorites, corrections, preview -->
+      <aside class="space-y-4 border-t border-slate-200 p-4 lg:col-span-2 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0 xl:col-span-1 xl:block xl:space-y-4 xl:border-t-0 xl:border-l" aria-label="Favorites, corrections, and preview">
+        <section class="rounded-xl border border-slate-200 p-4" aria-labelledby="favorites-title">
+          <div class="flex items-center justify-between">
+            <h2 id="favorites-title" class="flex items-center gap-2 text-sm font-semibold">
+              <svg class="icon size-5 fill-red-500 stroke-red-500" aria-hidden="true"><use href="#i-heart" /></svg>
+              Your Favorites
+              <span data-fav-count class="rounded-full bg-slate-100 px-2 py-0.5 text-xs">0</span>
+            </h2>
+            <button type="button" id="view-favorites" class="flex items-center gap-1 text-xs font-medium text-blue-700 hover:underline">View All<svg class="icon size-3.5" aria-hidden="true"><use href="#i-chevron-right" /></svg></button>
+          </div>
+          <ul id="favorites-list" data-region tabindex="-1" class="mt-3 divide-y divide-slate-100"></ul>
+        </section>
+
+        <section class="rounded-xl border border-slate-200 p-4" aria-labelledby="correct-title">
+          <h2 id="correct-title" class="flex items-center gap-3 text-sm font-semibold"><svg class="icon size-5" aria-hidden="true"><use href="#i-shield" /></svg>Correct a Font</h2>
+          <p class="mt-3 text-sm text-slate-500">Found a mistake or missing style? Help improve Google Fonts.</p>
+          <a href="https://github.com/google/fonts/issues" target="_blank" rel="noopener" class="mt-4 block rounded-lg border border-slate-200 px-4 py-2.5 text-center text-xs font-semibold hover:bg-slate-50">Suggest a Correction</a>
+        </section>
+
+        <section id="preview" class="scroll-mt-24 rounded-xl border border-slate-200 p-4" aria-labelledby="preview-title">
+          <h2 id="preview-title" class="flex items-center gap-3 text-sm font-semibold"><svg class="icon size-5" aria-hidden="true"><use href="#i-sparkles" /></svg>Font Preview</h2>
+          <p class="mt-3 text-sm text-slate-500">Type anything to see how it looks in all styles of a font.</p>
+          <form id="preview-form" class="mt-4 space-y-3">
+            <label for="preview-text" class="sr-only">Preview text</label>
+            <input id="preview-text" type="text" autocomplete="off" placeholder="Type your text here…" class="field py-3" />
+            <button type="submit" class="btn-dark w-full">Generate Preview<svg class="icon size-4" aria-hidden="true"><use href="#i-arrow-right" /></svg></button>
+            <label for="preview-font" class="sr-only">Font</label>
+            <select id="preview-font" class="field font-semibold"></select>
+          </form>
+          <ul id="preview-rows" class="mt-3 divide-y divide-slate-100"></ul>
+        </section>
+      </aside>
+    </div>
   </body>
 </html>
